@@ -1,5 +1,7 @@
 # Modules
+import math
 import os
+import re
 
 # Functions
 def Load_Documents():
@@ -13,5 +15,15 @@ def Load_Documents():
 
     return Docs
 
-print(Load_Documents())
-        
+def Tokenizer(text):
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    tokens = text.split()
+    return tokens
+
+def main():
+    Collection = Load_Documents()
+    print(Tokenizer(Collection[1]))
+
+if __name__ == "__main__":
+    main()
