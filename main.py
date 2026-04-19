@@ -3,6 +3,8 @@ import math
 import os
 import re
 
+from collections import Counter
+
 # Functions
 def Load_Documents():
     Docs = {}
@@ -21,9 +23,16 @@ def Tokenizer(text):
     tokens = text.split()
     return tokens
 
+def TF(tokens):
+    tf = Counter(tokens)
+    total_terms = len(tokens)
+    for term in tf:
+        tf[term] = tf[term] / total_terms
+    return tf
+
 def main():
     Collection = Load_Documents()
-    print(Tokenizer(Collection[1]))
+    Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
 
 if __name__ == "__main__":
     main()
