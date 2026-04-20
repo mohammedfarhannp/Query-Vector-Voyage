@@ -54,9 +54,21 @@ def TF_IDF_Vector(tf, idf):
     return tfidf
 
 def COSINE_Similarity(vector_1, vector_2):
-    pass
+    all_terms = set(vector_1.keys()) | set(vector_2.keys())
     
-
+    v1 = [vector_1.get(term, 0) for term in all_terms]
+    v2 = [vector_2.get(term, 0) for term in all_terms]
+    
+    dot_product = sum(a * b for a, b in zip(v1, v2))
+    
+    mag1 = math.sqrt(sum(a * a for a in v1))
+    mag2 = math.sqrt(sum(b * b for b in v2))
+    
+    if mag1 == 0 or mag2 == 0:
+        return 0.0
+    
+    return dot_product / (mag1 * mag2)
+    
 def main():
     Collection = Load_Documents()
     Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
