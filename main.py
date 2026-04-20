@@ -103,10 +103,36 @@ def Display_Results(similarities, ranked_docs, documents):
         print(f"   Preview: {preview}\n")
 
 def main():
+    print("[*] Loading Documents!!")
     Collection = Load_Documents()
-    Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
-    idf = IDF(Tokens_For_Each)
+    print("[+] Done!")
     
+    print("[*] Tokenizing Each Document!!")
+    Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
+    print("[+] Done!")
+    
+    print("[*] Computing IDF (Inverse Document Frequency)")
+    idf = IDF(Tokens_For_Each)
+    print("[+] Done!!")
+    
+    print("[*] Computing TF*IDF (Term Frequency Inverse Document Frequency)")
+    all_tfidf_vectors = {}
+    for doc_id, tokens in Tokens_For_Each.items():
+        tf = TF(tokens)
+        tfidf = TF_IDF_Vector(tf, idf)
+        all_tfidf_vectors[doc_id] = tfidf
+    print("[+] Done!!")
+    
+    
+    print("=" * 60)    
+    query = input("\nEnter your search query: ").strip()
+    
+    print("\nProcessing query...")
+    similarities = Process_Query(query, all_tfidf_vectors, idf)
+    
+    ranked_docs = Rank_Documents(similarities)
+
+    Display_Results(similarities, ranked_docs, documents)
 
 if __name__ == "__main__":
     main()
