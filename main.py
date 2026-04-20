@@ -69,9 +69,43 @@ def COSINE_Similarity(vector_1, vector_2):
     
     return dot_product / (mag1 * mag2)
     
+
+def Process_Query(query, all_tfidf_vectors, idf):
+    query_tokens = Tokenizer(query)
+    query_tf = TF(query_tokens)
+    query_tfidf = TF_IDF_Vector(TF, idf)
+    
+    similarities = {}
+    for doc_id, doc_vector in all_tfidf_vectors.items():
+        similarity = COSINE_Similarity(query_tfidf, doc_vector)
+        similarities[doc_id] = similarity
+
+    return similarities
+
+def Rank(similarities):
+    ranked = sorted(similarities.items(), key=lambda x: x[1], reverse=True)
+    return ranked
+
+def Display_Results(similarities, ranked_docs, documents):
+    print("\n" + "="*60)
+    print("COSINE SIMILARITY SCORES")
+    print("="*60)
+    for doc_id, score in similarities.items():
+        print(f"Document {doc_id}: {score:.4f}")
+    
+    print("\n" + "="*60)
+    print("RANKED DOCUMENTS (Most Relevant First)")
+    print("="*60)
+    for rank, (doc_id, score) in enumerate(ranked_docs, 1):
+        # Show first 100 characters of document as preview
+        preview = documents[doc_id][:100].replace('\n', ' ') + "..."
+        print(f"{rank}. Document {doc_id} (Score: {score:.4f})")
+        print(f"   Preview: {preview}\n")
+
 def main():
     Collection = Load_Documents()
     Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
+    idf = IDF(Tokens_For_Each)
     
 
 if __name__ == "__main__":
