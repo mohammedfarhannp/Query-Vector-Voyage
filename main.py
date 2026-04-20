@@ -46,9 +46,21 @@ def IDF(all_document_tokens):
         
         return idf
 
+def TF_IDF_Vector(tf, idf):
+    tfidf = {}
+    for term, tf_value in tf.items():
+        if term in idf:
+            tfidf[term] += tf_value * idf[term]
+    return tfidf
+
+def COSINE_Similarity(vector_1, vector_2):
+    pass
+    
+
 def main():
     Collection = Load_Documents()
     Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
+    
 
 if __name__ == "__main__":
     main()
