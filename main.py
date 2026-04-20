@@ -30,6 +30,22 @@ def TF(tokens):
         tf[term] = tf[term] / total_terms
     return tf
 
+def IDF(all_document_tokens):
+    num_of_docs = len(all_document_tokens)
+    
+    doc_freq = Counter()
+    
+    for tokens in all_document_tokens.values():
+        unique_terms = set(tokens)
+        for term in unique_terms:
+            doc_freq[term] += 1
+        
+        idf = {}
+        for term, freq in doc_freq.items():
+            idf[term] = math.log(num_of_docs / freq)
+        
+        return idf
+
 def main():
     Collection = Load_Documents()
     Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
