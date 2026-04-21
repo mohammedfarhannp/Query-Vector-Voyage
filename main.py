@@ -39,18 +39,20 @@ def IDF(all_document_tokens):
         unique_terms = set(tokens)
         for term in unique_terms:
             doc_freq[term] += 1
-        
-        idf = {}
-        for term, freq in doc_freq.items():
-            idf[term] = math.log(num_of_docs / freq)
-        
-        return idf
+    
+    # FIX 1: Move return outside the loop
+    idf = {}
+    for term, freq in doc_freq.items():
+        idf[term] = math.log(num_of_docs / freq)
+    
+    return idf
 
 def TF_IDF_Vector(tf, idf):
     tfidf = {}
     for term, tf_value in tf.items():
         if term in idf:
-            tfidf[term] += tf_value * idf[term]
+            # FIX 2: Use = instead of += (key doesn't exist yet)
+            tfidf[term] = tf_value * idf[term]
     return tfidf
 
 def COSINE_Similarity(vector_1, vector_2):
@@ -73,7 +75,8 @@ def COSINE_Similarity(vector_1, vector_2):
 def Process_Query(query, all_tfidf_vectors, idf):
     query_tokens = Tokenizer(query)
     query_tf = TF(query_tokens)
-    query_tfidf = TF_IDF_Vector(TF, idf)
+    # FIX 3: Pass query_tf (the variable), not TF (the function)
+    query_tfidf = TF_IDF_Vector(query_tf, idf)
     
     similarities = {}
     for doc_id, doc_vector in all_tfidf_vectors.items():
@@ -108,7 +111,7 @@ def main():
     print("[+] Done!")
     
     print("[*] Tokenizing Each Document!!")
-    Tokens_For_Each = {key:Tokenizer(value) for key,value in Collection.items()}
+    Tokens_For_Each = {key: Tokenizer(value) for key, value in Collection.items()}
     print("[+] Done!")
     
     print("[*] Computing IDF (Inverse Document Frequency)")
@@ -123,16 +126,16 @@ def main():
         all_tfidf_vectors[doc_id] = tfidf
     print("[+] Done!!")
     
-    
     print("=" * 60)    
     query = input("\nEnter your search query: ").strip()
     
     print("\nProcessing query...")
     similarities = Process_Query(query, all_tfidf_vectors, idf)
     
-    ranked_docs = Rank_Documents(similarities)
+    # FIX 4: Call Rank() not Rank_Documents()
+    ranked_docs = Rank(similarities)
 
-    Display_Results(similarities, ranked_docs, documents)
+    Display_Results(similarities, ranked_docs, Collection)
 
 if __name__ == "__main__":
     main()
